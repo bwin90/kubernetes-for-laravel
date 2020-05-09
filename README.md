@@ -1,2 +1,2 @@
-# kubernetes-for-laravel
+# kubernetes for laravel
 Use kubernetes for deploy laravel application
