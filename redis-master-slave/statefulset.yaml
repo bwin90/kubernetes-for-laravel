@@ -1,0 +1,53 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: redis-master
+spec:
+  selector:
+    matchLabels:
+      role: redis-master
+      app: redis
+  serviceName: master
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        role: redis-master
+        app: redis
+    spec:
+      containers:
+      - name: master
+        image: redis
+        command:
+        - redis-server
+        args:
+        - /usr/local/etc/redis/master.conf
+        - "--protected-mode"
+        - "no"
+        ports:
+        - name: master
+          containerPort: 6379
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: conf
+          mountPath: /usr/local/etc/redis
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+      volumes:
+      - name: data
+      - name: conf
+        configMap:
+          name: conf
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+      annotations:
+        volume.beta.kubernetes.io/storage-class: "managed-nfs-storage"
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi

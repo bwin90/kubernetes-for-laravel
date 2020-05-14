@@ -1,0 +1,28 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    role: master
+  name: redis-master
+spec:
+  clusterIP: None
+  ports:
+  - port: 6379
+    name: redis-port-master
+  selector:
+    role: redis-master
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    role: slave
+  name: redis-slave
+spec:
+  ports:
+  - port: 6379
+    name: redis-port-slave
+  selector:
+    app: redis

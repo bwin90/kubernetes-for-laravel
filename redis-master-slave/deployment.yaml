@@ -1,0 +1,35 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: redis-slave
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      role: redis-slave
+      app: redis
+  template:
+    metadata:
+      labels:
+        role: redis-slave
+        app: redis
+    spec:
+      containers:
+      - name: slave
+        image: redis
+        command:
+        - redis-server
+        args:
+        - /usr/local/etc/redis/slave.conf
+        - "--protected-mode"
+        - "no"
+        volumeMounts:
+        - name: conf
+          mountPath: /usr/local/etc/redis
+        ports:
+        - name: slave
+          containerPort: 6379
+      volumes:
+      - name: conf
+        configMap:
+          name: conf
